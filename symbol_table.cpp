@@ -119,7 +119,7 @@ namespace SLLGen
 	        for(auto &p: top.first->getSymbols())
 	        {
 	            if(!isdigit(p.second.name[0]))
-	                out<<top.second<<"\t"<<p.second.type<<"\t"<<p.second.name<<std::endl;
+	                out<<top.second<<"\t"<<p.second.ctype<<"\t"<<p.second.name<<std::endl;
 	        }
 	        for(auto &child: top.first->getChildren())
     	        stk.push_back({child, top.second+1});

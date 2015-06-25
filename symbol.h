@@ -9,7 +9,7 @@ namespace SLLGen
 {
 	struct Symbol
 	{
-		std::string type;
+		std::string type, ctype;
 		std::string name;
 		std::string uniqueName;
 		int arraySize;

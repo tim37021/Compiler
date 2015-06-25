@@ -9,6 +9,7 @@ using namespace std;
 static const char *typeLLVMMap[]={"", "i8", "i32", "float", "double", "", "i8*", "i32*", "float*", "double*"};
 // for variable symbol
 static const char *typeLLVMMapPtr[]={"", "i8*", "i32*", "float*", "double*", "", "i8**", "i32**", "float**", "double**"};
+static const char *typeCTypeMap[]={"void", "char", "int", "float", "double", "void*", "char*", "int*", "float*", "double*"};
 
 static string ReplaceString(string subject, const string& search,
                           const string& replace) {
@@ -35,6 +36,7 @@ namespace SLLGen
 		{
 			m_currentFuncSymbol.paramTypes.clear();
 			m_currentFuncSymbol.type=typeLLVMMap[rntType];
+			m_currentFuncSymbol.ctype="function";
 			m_currentFuncSymbol.name=name;
 
 			string args;
@@ -115,6 +117,7 @@ namespace SLLGen
 		// Make our symbol first
 		Symbol var;
 		var.type=string(typeLLVMMap[t])+(!is_arg?"*":"");
+		var.ctype=string(typeCTypeMap[t])+(arraySize?"[]": "");
 		var.name=name;
 		var.arraySize=arraySize;
 
