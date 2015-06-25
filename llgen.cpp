@@ -10,6 +10,7 @@ static const char *typeLLVMMap[]={"", "i8", "i32", "float", "double", "", "i8*",
 // for variable symbol
 static const char *typeLLVMMapPtr[]={"", "i8*", "i32*", "float*", "double*", "", "i8**", "i32**", "float**", "double**"};
 static const char *typeCTypeMap[]={"void", "char", "int", "float", "double", "void*", "char*", "int*", "float*", "double*"};
+static const char *opCMap[]={"+", "-", "*", "/", "==", "!=", ">", ">=", "<", "<="};
 
 static string ReplaceString(string subject, const string& search,
                           const string& replace) {
@@ -194,6 +195,8 @@ namespace SLLGen
 			else
 				throw TypeError("TypeError: Unknown type conversion "+lhs_type+" vs "+rhs_type);
 
+            m_warningLog+="Type of lhs("+lhs_type+") is different from type of rhs("+rhs_type+") op='"+opCMap[op]+"', convert to "+targetType+"\n";
+
 			lhsUnique=castType(lhs_type, lhsUnique, targetType);
 			rhsUnique=castType(rhs_type, rhsUnique, targetType);
 			lhs_type=rhs_type=targetType;
@@ -291,11 +294,15 @@ namespace SLLGen
 		if(isPointerType(lhs_type)&&m_addressedParameter.find(lhsUnique)==m_addressedParameter.cend())
 		{
 			string targetType=ref(lhs_type);
+			if(rhs_type!=targetType)
+			    m_warningLog+="Type of rhs("+rhs_type+") does not match!, convert to "+targetType+"\n";
 			rhsUnique=castType(rhs_type, rhsUnique, targetType);
 			rhs_type=targetType;
 		}else if(!isTempVar(lhs_type))
 		{
 			string targetType=lhs_type;
+			if(rhs_type!=targetType)
+			    m_warningLog+="Type of rhs("+rhs_type+") does not match!, convert to "+targetType+"\n";
 			rhsUnique=castType(rhs_type, rhsUnique, targetType);
 			rhs_type=targetType;
 		}
@@ -330,6 +337,10 @@ namespace SLLGen
 		string rhsUnique;
 		prepare(rhs, rhsUnique, rhs_type);
 		
+		if(m_currentFuncSymbol.type!=rhs_type)
+		{
+		    m_warningLog+="Return type("+rhs_type+") not match!, convert to "+m_currentFuncSymbol.type+"\n";
+		}
 		string casted=castType(rhs_type, rhs, m_currentFuncSymbol.type);
 
 		if(!m_endBlock.back())

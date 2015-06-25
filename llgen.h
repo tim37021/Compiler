@@ -23,7 +23,6 @@ namespace SLLGen
 		BO_SUB,
 		BO_MUL,
 		BO_DIV,
-		BO_EQU,
 	
 		BO_EQ,
 		BO_NE,
@@ -106,6 +105,11 @@ namespace SLLGen
 
 		std::string getLL() const
 		{ return m_ll; }
+		
+		std::string getWarningLog() const
+		{
+		    return m_warningLog;
+		}
 	private:
 		std::string getSymbolType(const std::string &name);
 		std::string allocTemp(const std::string &type);

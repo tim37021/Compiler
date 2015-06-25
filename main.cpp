@@ -397,6 +397,7 @@ int main(int argc, char *argv[])
 		compile(root.children.front());
 		cout<<llg.getLL();
 		
+		cerr<<llg.getWarningLog();
 		llg.getTable().dump(cerr);
 	}catch(runtime_error &e)
 	{
