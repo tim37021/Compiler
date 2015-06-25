@@ -277,6 +277,11 @@ void Stmt(const ParseTreeNode &node)
 	{
 		llg.addPrintStmt(ExprHelper(node.children[2]));
 	}
+	
+	if(node.children[0].value=="break")
+	{
+	    llg.addBreakStmt();
+	}
 }
 void StmtList(const ParseTreeNode &);
 void StmtList_(const ParseTreeNode &node)

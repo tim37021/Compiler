@@ -94,6 +94,7 @@ namespace SLLGen
 		void beginWhileCondEvalution();
 		void beginWhile(const std::string &cond);
 		void endWhile();
+		void addBreakStmt();
 		void addReturnStmt(const std::string &rhs);
 		std::string loadMemory(const std::string &name, const std::string &sub="");
 
@@ -106,10 +107,8 @@ namespace SLLGen
 		std::string getLL() const
 		{ return m_ll; }
 		
-		std::string getWarningLog() const
-		{
-		    return m_warningLog;
-		}
+		std::string getWarningLog() const;
+		
 	private:
 		std::string getSymbolType(const std::string &name);
 		std::string allocTemp(const std::string &type);

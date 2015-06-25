@@ -753,7 +753,7 @@ namespace SLLGen
 		{
 			string ending=allocTemp("label");
 			*m_currentTargetLL+="br i1 "+cond+", label "+trueLabel+", label "+ending+"\n";
-			*m_currentTargetLL+=trueCode;
+			*m_currentTargetLL+=ReplaceString(trueCode, "{BREAK_WHILE}", ending);
 			if(!m_endBlock.back())
 				*m_currentTargetLL+="br label "+beforeLabel+"\n";
 			m_endBlock.pop_back();
@@ -765,6 +765,25 @@ namespace SLLGen
 		{
 			if(!isTempVar(p.first))
 				p.second="";
+		}
+	}
+	
+	void LLGen::addBreakStmt()
+	{
+		if(m_table.isInGlobal())
+			throw InvalidOperation("InvalidOperation: break must be placed in function");
+		bool found=false;
+		for(int i=0; i<m_ifClause.size(); i++)
+    		if(m_ifClause[i].beforeLabel!="")
+    		    found=true;
+    
+        if(!found)
+    		throw InvalidOperation("InvalidOperation: break can not be placed here");
+
+        if(!m_endBlock.back())
+		{
+		    allocTemp("label");
+			*m_currentTargetLL+="br label {BREAK_WHILE}\n";
 		}
 	}
 
@@ -861,12 +880,16 @@ namespace SLLGen
 		string casted;
 		if(isSymbol(var))
 			casted=allocTemp(targetType);
+		else
+		    casted=var;
 		if(targetType=="i1")
 		{
 		    if(type=="i8"||type=="i32")
-                *m_currentTargetLL+=casted+" = icmp ne "+type+" "+var+", 0\n";
-		    else
-                *m_currentTargetLL+=casted+" = fcmp one "+type+" "+var+", 0\n";
+		    {
+		        if(isSymbol(var))
+                    *m_currentTargetLL+=casted+" = icmp ne "+type+" "+var+", 0\n";
+		    }else
+		        throw InvalidOperation("InvalidOperation: Cannot convert floating to boolean.");
 		} else if(type=="i1"||type=="i8"||type=="i32")
 		{
 			if(isSymbol(var))
@@ -931,5 +954,14 @@ namespace SLLGen
 	bool LLGen::isSymbol(const string &name) const
 	{
 		return !(isdigit(name[0])||(name[0]=='-'&&isdigit(name[1])));
+	}
+	
+	string LLGen::getWarningLog() const
+	{
+	    string tmp=m_warningLog;
+	    ReplaceString(tmp, "i32", "int");
+	    ReplaceString(tmp, "i8", "char");
+	    ReplaceString(tmp, "i1", "bool");
+	    return tmp;
 	}
 }
