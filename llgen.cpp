@@ -10,7 +10,7 @@ static const char *typeLLVMMap[]={"", "i8", "i32", "float", "double", "", "i8*",
 // for variable symbol
 static const char *typeLLVMMapPtr[]={"", "i8*", "i32*", "float*", "double*", "", "i8**", "i32**", "float**", "double**"};
 static const char *typeCTypeMap[]={"void", "char", "int", "float", "double", "void*", "char*", "int*", "float*", "double*"};
-static const char *opCMap[]={"+", "-", "*", "/", "==", "!=", ">", ">=", "<", "<="};
+static const char *opCMap[]={"+", "-", "*", "/", "==", "!=", ">", ">=", "<", "<=", "&&", "||"};
 
 static string ReplaceString(string subject, const string& search,
                           const string& replace) {
@@ -192,6 +192,8 @@ namespace SLLGen
 				targetType="i32";
 			else if(lhs_type=="i8"||rhs_type=="i8")
 				targetType="i8";
+			else if(lhs_type=="i1"||rhs_type=="i1")
+			    targetType="i1";
 			else
 				throw TypeError("TypeError: Unknown type conversion "+lhs_type+" vs "+rhs_type);
 
@@ -907,7 +909,16 @@ namespace SLLGen
 		        throw InvalidOperation("InvalidOperation: Cannot convert floating to boolean.");
 		} else if(type=="i1"||type=="i8"||type=="i32")
 		{
-			if(isSymbol(var))
+			if(isSymbol(var)&&targetType[0]=='i')
+			{
+			    int src=atoi(type.c_str()+1);
+			    int tar=atoi(targetType.c_str()+1);
+			    if(src>tar)
+			        *m_currentTargetLL+=casted+" = trunc "+type+" "+var+" to "+targetType+"\n";
+			    else
+			        *m_currentTargetLL+=casted+" = zext "+type+" "+var+" to "+targetType+"\n";
+			}
+			else if(isSymbol(var)&&targetType=="float" || targetType=="double")
 				*m_currentTargetLL+=casted+" = sitofp "+type+" "+var+" to "+targetType+"\n";
 			else if(targetType=="float" || targetType=="double")
 				casted=var+".0";
