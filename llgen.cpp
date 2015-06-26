@@ -361,9 +361,12 @@ namespace SLLGen
 	}
 
 	string LLGen::genBasicOperation_i32(BinaryOperation op, const std::string &lhs, 
-		const std::string &rhs, const string &type, std::string &outType)
+		const std::string &rhs, const string &type_, std::string &outType)
 	{
 		string head;
+		string castedLhs=lhs;
+		string castedRhs=rhs;
+		string type=type_;
 		switch(op)
 		{
 			case BO_ADD:
@@ -387,12 +390,18 @@ namespace SLLGen
 			case BO_LE:
 				head="icmp sle"; outType="i1"; break;
 			case BO_AND:
-				head="and"; outType=type; break;
+			    castedLhs=castType(type, lhs, "i1");
+			    castedRhs=castType(type, rhs, "i1");
+			    type="i1";
+				head="and"; outType="i1"; break;
 			case BO_OR:
-				head="or"; outType=type; break;
+			    castedLhs=castType(type, lhs, "i1");
+			    castedRhs=castType(type, rhs, "i1");
+			    type="i1";
+				head="or"; outType="i1"; break;
 		}
 
-		return head+" "+type+" "+lhs+", "+rhs;
+		return head+" "+type+" "+castedLhs+", "+castedRhs;
 	}
 
 	string LLGen::genBasicOperation_floating(BinaryOperation op, const string &lhs, 
@@ -892,6 +901,8 @@ namespace SLLGen
 		    {
 		        if(isSymbol(var))
                     *m_currentTargetLL+=casted+" = icmp ne "+type+" "+var+", 0\n";
+                else
+                    return to_string(atoi(var.c_str())!=0);
 		    }else
 		        throw InvalidOperation("InvalidOperation: Cannot convert floating to boolean.");
 		} else if(type=="i1"||type=="i8"||type=="i32")
