@@ -29,7 +29,10 @@ namespace SLLGen
 		BO_GT,
 		BO_GE,
 		BO_LT,
-		BO_LE
+		BO_LE,
+		
+		BO_AND,
+		BO_OR
 	};
 
 	struct InvalidOperation: public std::runtime_error

@@ -109,6 +109,10 @@ BinaryOperation BinOp(const ParseTreeNode &node)
 		return BO_LT;
 	if(node.children[0].value=="<=")
 		return BO_LE;
+	if(node.children[0].value=="&&")
+	    return BO_AND;
+	if(node.children[0].value=="||")
+	    return BO_OR;  
 }
 
 UnaryOperation UnaryOp(const ParseTreeNode &node)

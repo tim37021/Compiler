@@ -230,7 +230,7 @@ namespace SLLGen
 					return to_string(lhsValue<=rhsValue);
 			}
 		}
-		if(lhs_type=="i32")
+		if(lhs_type=="i32"||lhs_type=="i8"||lhs_type=="i1")
 		{
 			string outType;
 			string code=genBasicOperation_i32(op, lhsUnique, rhsUnique, lhs_type, outType);
@@ -386,6 +386,10 @@ namespace SLLGen
 				head="icmp slt"; outType="i1"; break;
 			case BO_LE:
 				head="icmp sle"; outType="i1"; break;
+			case BO_AND:
+				head="and"; outType=type; break;
+			case BO_OR:
+				head="or"; outType=type; break;
 		}
 
 		return head+" "+type+" "+lhs+", "+rhs;
