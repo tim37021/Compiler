@@ -918,7 +918,7 @@ namespace SLLGen
 			    else
 			        *m_currentTargetLL+=casted+" = zext "+type+" "+var+" to "+targetType+"\n";
 			}
-			else if(isSymbol(var)&&targetType=="float" || targetType=="double")
+			else if(isSymbol(var)&&(targetType=="float" || targetType=="double"))
 				*m_currentTargetLL+=casted+" = sitofp "+type+" "+var+" to "+targetType+"\n";
 			else if(targetType=="float" || targetType=="double")
 				casted=var+".0";
